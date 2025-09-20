@@ -357,6 +357,7 @@ def copy_and_optimize_images():
         "IMG_0707.jpeg": 800,
     }
 
+    # Process images in main directory
     for img_file in SRC_IMAGES_DIR.iterdir():
         if img_file.is_file() and img_file.suffix.lower() in [
             ".jpg",
@@ -369,6 +370,19 @@ def copy_and_optimize_images():
             max_width = image_sizes.get(img_file.name)
             optimize_image(img_file, dest_path, max_width)
             print(f"  ✓ Copied {img_file.name}")
+
+    # Process jaago subdirectory
+    jaago_src = SRC_IMAGES_DIR / "jaago"
+    if jaago_src.exists() and jaago_src.is_dir():
+        jaago_dist = DIST_IMAGES_DIR / "jaago"
+        jaago_dist.mkdir(exist_ok=True)
+
+        for img_file in jaago_src.iterdir():
+            if img_file.is_file() and img_file.suffix.lower() in [".jpg", ".jpeg", ".png"]:
+                dest_path = jaago_dist / img_file.name
+                max_width = image_sizes.get(img_file.name, 800)
+                optimize_image(img_file, dest_path, max_width)
+                print(f"  ✓ Copied jaago/{img_file.name}")
 
 
 def generate_portfolio_html(rows: List[dict], force_refetch: bool = False) -> str:
@@ -449,7 +463,7 @@ def generate_portfolio_html(rows: List[dict], force_refetch: bool = False) -> st
             f'      <td class="org">{card_content}</td>\n'
             f'      <td class="scope"><span class="emoji" title="{html.escape(scope_label)}">{scope_emoji}</span></td>\n'
             f'      <td class="category"><span class="emoji" title="{html.escape(cat_label)}">{cat_emoji}</span></td>\n'
-            f'      <td class="ratings">{cn_html}{gs_html}</td>\n'
+            f'      <td class="ratings"><div class="ratings-wrapper">{cn_html}{gs_html}</div></td>\n'
             f'      <td class="notes"><span class="why">{html.escape(why)}</span></td>\n'
             "    </tr>"
         )
